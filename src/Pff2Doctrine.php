@@ -71,6 +71,7 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
             }
             $cache = new RedisCache();
             $cache->setRedis($redis);
+            $cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
         } else {
             $cache = new ApcuCache();
             $cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
