@@ -17,7 +17,7 @@
 	"require": {
 		"stonedz/pff2-installers": "*",
 		"doctrine/orm": "2.5.*",
-		"doctrine/cache": "1.6.*"
+		"doctrine/cache": "1.11.*"
 	},
   	"require-dev": {
         "stonedz/pff2": "2.*"
