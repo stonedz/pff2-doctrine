@@ -18,8 +18,8 @@ use pff\Iface\IBeforeSystemHook;
 use pff\Iface\IConfigurableModule;
 use Doctrine\ORM\Configuration;
 
-class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystemHook{
-
+class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystemHook
+{
     /**
      * @var EntityManager
      */
@@ -29,7 +29,8 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
     private $redis_host;
     private $redis_password;
 
-    public function __construct($confFile = 'pff2-doctrine/module.conf.local.yaml') {
+    public function __construct($confFile = 'pff2-doctrine/module.conf.local.yaml')
+    {
         $this->loadConfig($confFile);
     }
 
@@ -37,7 +38,8 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
      * @param array $parsedConfig
      * @return mixed
      */
-    public function loadConfig($parsedConfig) {
+    public function loadConfig($parsedConfig)
+    {
         $conf = $this->readConfig($parsedConfig);
         $this->redis = $conf['moduleConf']['redis'];
         $this->redis_port = $conf['moduleConf']['redis_port'];
@@ -50,37 +52,39 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
      *
      * @return mixed
      */
-    public function doBeforeSystem() {
+    public function doBeforeSystem()
+    {
         $this->initORM();
     }
 
-    private function initORM() {
+    private function initORM()
+    {
         $config_pff = ServiceContainer::get('config');
-        if (true === $config_pff->getConfigData('development_environment')) {
-            $cache = new ArrayCache();
-        }
-        elseif($this->redis) {
-            $redis = new \Redis();
-            if(!$redis->connect($this->redis_host, $this->redis_port)) {
-                throw new PffException("Cannot connect to redis",500);
-            }
-            if($this->redis_password != '') {
-                if(!$redis->auth($this->redis_password)) {
-                    throw new PffException("Cannot auth to redis",500);
-                }
-            }
-            $cache = new RedisCache();
-            $cache->setRedis($redis);
-            $cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
-        } else {
-            $cache = new ApcuCache();
-            $cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
-        }
+        //if (true === $config_pff->getConfigData('development_environment')) {
+        //$cache = new ArrayCache();
+        //}
+        //elseif($this->redis) {
+        //$redis = new \Redis();
+        //if(!$redis->connect($this->redis_host, $this->redis_port)) {
+        //throw new PffException("Cannot connect to redis",500);
+        //}
+        //if($this->redis_password != '') {
+        //if(!$redis->auth($this->redis_password)) {
+        //throw new PffException("Cannot auth to redis",500);
+        //}
+        //}
+        //$cache = new RedisCache();
+        //$cache->setRedis($redis);
+        //$cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
+        //} else {
+        //$cache = new ApcuCache();
+        //$cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
+        //}
 
         $config = new Configuration();
-        $config->setMetadataCacheImpl($cache);
-        $config->setQueryCacheImpl($cache);
-        $config->setResultCacheImpl($cache);
+        //$config->setMetadataCacheImpl($cache);
+        //$config->setQueryCacheImpl($cache);
+        //$config->setResultCacheImpl($cache);
         $driverImpl = $config->newDefaultAnnotationDriver(ROOT . DS . 'app' . DS . 'models');
         $config->setMetadataDriverImpl($driverImpl);
         $config->setQueryCacheImpl($cache);

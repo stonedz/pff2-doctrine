@@ -15,12 +15,11 @@
 	],
 	"homepage": "https://github.com/stonedz/pff2-doctrine",
 	"require": {
-		"stonedz/pff2-installers": "*",
-		"doctrine/orm": "2.5.*",
-		"doctrine/cache": "1.11.*"
+		"stonedz/pff2-installers": "2.*",
+		"doctrine/orm": "2.*"
 	},
   	"require-dev": {
-        "stonedz/pff2": "2.*"
+        "friendsofphp/php-cs-fixer": "~3.1"
     },
     "autoload": {
         "psr-4": {
