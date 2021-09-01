@@ -7,13 +7,10 @@
 
 namespace pff\modules;
 
-use Doctrine\Common\Cache\ApcuCache;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\RedisCache;
+use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\ORM\EntityManager;
 use pff\Abs\AModule;
 use pff\Core\ServiceContainer;
-use pff\Exception\PffException;
 use pff\Iface\IBeforeSystemHook;
 use pff\Iface\IConfigurableModule;
 use Doctrine\ORM\Configuration;
@@ -81,10 +78,12 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
         //$cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
         //}
 
+        $cache =  new PhpFileCache('.');
+
         $config = new Configuration();
-        //$config->setMetadataCacheImpl($cache);
-        //$config->setQueryCacheImpl($cache);
-        //$config->setResultCacheImpl($cache);
+        $config->setMetadataCacheImpl($cache);
+        $config->setQueryCacheImpl($cache);
+        $config->setResultCacheImpl($cache);
         $driverImpl = $config->newDefaultAnnotationDriver(ROOT . DS . 'app' . DS . 'models');
         $config->setMetadataDriverImpl($driverImpl);
         $config->setQueryCacheImpl($cache);
