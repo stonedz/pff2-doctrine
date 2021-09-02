@@ -78,7 +78,7 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
         //$cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
         //}
 
-        $cache =  new PhpFileCache('.');
+        $cache =  new PhpFileCache(ROOT . DS . 'tmp'.DS);
 
         $config = new Configuration();
         $config->setMetadataCacheImpl($cache);
