@@ -8,12 +8,15 @@
 namespace pff\modules;
 
 use Doctrine\Common\Cache\PhpFileCache;
+use Doctrine\Common\Cache\Psr6\CacheAdapter;
+use Doctrine\Common\Cache\RedisCache;
 use Doctrine\ORM\EntityManager;
 use pff\Abs\AModule;
 use pff\Core\ServiceContainer;
 use pff\Iface\IBeforeSystemHook;
 use pff\Iface\IConfigurableModule;
 use Doctrine\ORM\Configuration;
+use pff\Exception\PffException;
 
 class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystemHook
 {
@@ -57,31 +60,26 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
     private function initORM()
     {
         $config_pff = ServiceContainer::get('config');
-        //if (true === $config_pff->getConfigData('development_environment')) {
-        //$cache = new ArrayCache();
-        //}
-        //elseif($this->redis) {
-        //$redis = new \Redis();
-        //if(!$redis->connect($this->redis_host, $this->redis_port)) {
-        //throw new PffException("Cannot connect to redis",500);
-        //}
-        //if($this->redis_password != '') {
-        //if(!$redis->auth($this->redis_password)) {
-        //throw new PffException("Cannot auth to redis",500);
-        //}
-        //}
-        //$cache = new RedisCache();
-        //$cache->setRedis($redis);
-        //$cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
-        //} else {
-        //$cache = new ApcuCache();
-        //$cache->setNamespace($this->_app->getConfig()->getConfigData('app_name'));
-        //}
+        if (false === $config_pff->getConfigData('redis')) {
+            $cache =  new PhpFileCache(ROOT . DS . 'tmp' . DS);
+        } else {
+            $redis = new \Redis();
+            if (!$redis->connect($config_pff[''], $config_pff[''])) {
+                throw new PffException("Cannot connect to redis", 500);
+            }
+            if ($this->redis_password != '') {
+                if (!$redis->auth($this->redis_password)) {
+                    throw new PffException("Cannot auth to redis", 500);
+                }
+            }
+            $cache = new RedisCache();
+            $cache->setRedis($redis);
+            $cache->setNamespace($config_pff['app_name']);
+        }
 
-        $cache =  new PhpFileCache(ROOT . DS . 'tmp'.DS);
 
         $config = new Configuration();
-        $config->setMetadataCacheImpl($cache);
+        $config->setMetadataCache(CacheAdapter::wrap($cache));
         $config->setQueryCacheImpl($cache);
         $config->setResultCacheImpl($cache);
         $driverImpl = $config->newDefaultAnnotationDriver(ROOT . DS . 'app' . DS . 'models');
