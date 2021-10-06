@@ -16,6 +16,7 @@ use pff\Core\ServiceContainer;
 use pff\Iface\IBeforeSystemHook;
 use pff\Iface\IConfigurableModule;
 use Doctrine\ORM\Configuration;
+use pff\Config;
 use pff\Exception\PffException;
 
 class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystemHook
@@ -59,6 +60,7 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
 
     private function initORM()
     {
+        /** @var $config_php pff\config */
         $config_pff = ServiceContainer::get('config');
         if (false === $this->redis) {
             $cache =  new PhpFileCache(ROOT . DS . 'tmp' . DS);
@@ -74,7 +76,7 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
             }
             $cache = new RedisCache();
             $cache->setRedis($redis);
-            $cache->setNamespace($config_pff['app_name']);
+            $cache->setNamespace($config_pff->getConfigData('app_name'));
         }
 
 
