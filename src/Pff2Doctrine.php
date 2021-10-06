@@ -60,16 +60,16 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
     private function initORM()
     {
         $config_pff = ServiceContainer::get('config');
-        if (false === $config_pff->getConfigData('redis')) {
+        if (false === $this->redis) {
             $cache =  new PhpFileCache(ROOT . DS . 'tmp' . DS);
         } else {
             $redis = new \Redis();
-            if (!$redis->connect($config_pff[''], $config_pff[''])) {
+            if (!$redis->connect($this->redis_host, $this->redis_port)) {
                 throw new PffException("Cannot connect to redis", 500);
             }
             if ($this->redis_password != '') {
                 if (!$redis->auth($this->redis_password)) {
-                    throw new PffException("Cannot auth to redis", 500);
+                    throw new PffException('Cannot authh to redis', 500);
                 }
             }
             $cache = new RedisCache();
@@ -84,7 +84,6 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
         $config->setResultCacheImpl($cache);
         $driverImpl = $config->newDefaultAnnotationDriver(ROOT . DS . 'app' . DS . 'models');
         $config->setMetadataDriverImpl($driverImpl);
-        $config->setQueryCacheImpl($cache);
         $config->setProxyDir(ROOT . DS . 'app' . DS . 'proxies');
         $config->setProxyNamespace('pff\proxies');
 
