@@ -60,9 +60,9 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
 
     private function initORM()
     {
-        /** @var $config_php pff\config */
+        /** @var Config */
         $config_pff = ServiceContainer::get('config');
-        if (false === $this->redis) {
+        if (false === $this->redis || $config_pff->getConfigData('development_environment')) {
             $cache =  new PhpFileCache(ROOT . DS . 'tmp' . DS);
         } else {
             $redis = new \Redis();
