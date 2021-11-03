@@ -81,9 +81,11 @@ class Pff2Doctrine extends AModule implements IConfigurableModule, IBeforeSystem
 
 
         $config = new Configuration();
-        $config->setMetadataCache(CacheAdapter::wrap($cache));
-        $config->setQueryCacheImpl($cache);
-        $config->setResultCacheImpl($cache);
+        if(!$config_pff->getConfigData('development_environment')){
+            $config->setMetadataCache(CacheAdapter::wrap($cache));
+            $config->setQueryCacheImpl($cache);
+            $config->setResultCacheImpl($cache);
+        }
         $driverImpl = $config->newDefaultAnnotationDriver(ROOT . DS . 'app' . DS . 'models');
         $config->setMetadataDriverImpl($driverImpl);
         $config->setProxyDir(ROOT . DS . 'app' . DS . 'proxies');
